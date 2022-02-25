@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ingilizce_kelime/data/local_storage.dart';
 import 'package:ingilizce_kelime/main.dart';
 import 'package:ingilizce_kelime/models/word_model.dart';
+import 'package:ingilizce_kelime/pages/random_card.dart';
 import 'package:ingilizce_kelime/widgets/custom_search_delegate.dart';
 import 'package:ingilizce_kelime/widgets/word_list_item.dart';
 
@@ -47,7 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () {
                 _showAddWordBottomSheet();
               },
-              icon: const Icon(Icons.add))
+              icon: const Icon(Icons.add)),
+              IconButton(onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RandomWordCard(),));
+              }, icon: const Icon(Icons.workspaces_outlined))
         ],
       ),
       body: _allWords.isNotEmpty
@@ -55,6 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (context, index) {
                 var _oAnkiListeElemani = _allWords[index];
                 return Dismissible(
+                  
                   background: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
