@@ -1,6 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:ingilizce_kelime/data/local_storage.dart';
+import 'package:ingilizce_kelime/models/word_model.dart';
 
-void main() {
+import 'pages/my_home_page.dart';
+
+final locator = GetIt.instance;
+
+void setup(){
+  locator.registerSingleton<LocalStorage>(HiveLocalStorage());
+}
+
+Future<void> setupHive()async{
+await Hive.initFlutter();
+      Hive.registerAdapter(WordAdapter());
+      var wordBox = await Hive.openBox<Word>('words');
+}
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+      await setupHive();
+      setup();
   runApp(const MyApp());
 }
 
@@ -10,58 +33,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Kelime Kayıt',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),
+          primarySwatch: Colors.blue,
+          appBarTheme: const AppBarTheme(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(color: Colors.black))),
+      home: const MyHomePage(),
     );
   }
 }
