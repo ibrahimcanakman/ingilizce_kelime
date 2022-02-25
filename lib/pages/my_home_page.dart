@@ -31,59 +31,63 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var kelimeSayisi = _allWords.length;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text(
-          'Kelimeler',
-          style: TextStyle(color: Colors.black),
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text(
+            '$kelimeSayisi Kelime Kayıtlı',
+            style: const TextStyle(color: Colors.black),
+          ),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  _showSearchPage();
+                },
+                icon: const Icon(Icons.search)),
+            IconButton(
+                onPressed: () {
+                  _showAddWordBottomSheet();
+                },
+                icon: const Icon(Icons.add)),
+            IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const RandomWordCard(),
+                  ));
+                },
+                icon: const Icon(Icons.workspaces_outlined))
+          ],
         ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                _showSearchPage();
-              },
-              icon: const Icon(Icons.search)),
-          IconButton(
-              onPressed: () {
-                _showAddWordBottomSheet();
-              },
-              icon: const Icon(Icons.add)),
-              IconButton(onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const RandomWordCard(),));
-              }, icon: const Icon(Icons.workspaces_outlined))
-        ],
-      ),
-      body: _allWords.isNotEmpty
-          ? ListView.builder(
-              itemBuilder: (context, index) {
-                var _oAnkiListeElemani = _allWords[index];
-                return Dismissible(
-                  
-                  background: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.delete),
-                      Text(' Bu Kelime Silindi')
-                    ],
-                  ),
-                  key: Key(_oAnkiListeElemani.id),
-                  onDismissed: (direction) {
-                    _allWords.removeAt(index);
-                    _localStorage.deleteWord(word: _oAnkiListeElemani);
-                    setState(() {});
-                  },
-                  child: WordItem(
-                    word: _oAnkiListeElemani,
-                  ),
-                );
-              },
-              itemCount: _allWords.length,
-            )
-          : const Center(
-              child: Text('Kelime yok...'),
-            ),
-    );
+        body: _allWords.isNotEmpty
+            ? ListView.builder(
+                itemBuilder: (context, index) {
+                  var _oAnkiListeElemani = _allWords[index];
+                  return Dismissible(
+                    direction: DismissDirection.startToEnd,
+                    background: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.delete),
+                        Text(' Bu Kelime Silindi')
+                      ],
+                    ),
+                    key: Key(_oAnkiListeElemani.id),
+                    onDismissed: (direction) {
+                      _allWords.removeAt(index);
+                      _localStorage.deleteWord(word: _oAnkiListeElemani);
+                      setState(() {});
+                    },
+                    child: WordItem(
+                      word: _oAnkiListeElemani,
+                    ),
+                  );
+                },
+                itemCount: _allWords.length,
+              )
+            : const Center(
+                child: Text('Kelime yok...'),
+              ));
   }
 
   void _showAddWordBottomSheet() {
@@ -105,6 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: MediaQuery.of(context).size.height / 40,
                     ),
                     TextField(
+                      maxLines: null,
                       autofocus: true,
                       controller: _kelimeController,
                       decoration: InputDecoration(
@@ -116,6 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       height: MediaQuery.of(context).size.height / 35,
                     ),
                     TextField(
+                      maxLines: null,
                       controller: _anlamController,
                       decoration: InputDecoration(
                           label: const Text('Anlamı'),

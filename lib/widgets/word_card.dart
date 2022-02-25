@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../models/word_model.dart';
-
 class WordCard extends StatefulWidget {
   const WordCard(
       {Key? key,
       required this.kelime,
       required this.anlam,
       required this.cumle,
-      required this.renk
-      })
+      required this.renk})
       : super(key: key);
   final String kelime;
   final String anlam;
@@ -43,6 +40,7 @@ class _WordCardState extends State<WordCard> {
             children: [
               Text(
                 widget.kelime,
+                textAlign: TextAlign.center,
                 style:
                     const TextStyle(fontSize: 30, fontWeight: FontWeight.w500),
               ),
@@ -50,6 +48,7 @@ class _WordCardState extends State<WordCard> {
                 visible: gorunurluk,
                 child: Text(
                   widget.anlam,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 30, fontWeight: FontWeight.w500),
                 ),
@@ -58,6 +57,7 @@ class _WordCardState extends State<WordCard> {
                 visible: gorunurluk,
                 child: Text(
                   widget.cumle,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.normal),
                 ),

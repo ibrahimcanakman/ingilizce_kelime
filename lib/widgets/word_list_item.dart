@@ -28,14 +28,19 @@ class _WordItemState extends State<WordItem> {
       child: ListTile(
         title: Row(
           children: [
-            Text(
-              widget.word.kelime,
-              style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.w900),
+            Expanded(
+              child: Text(
+                widget.word.kelime,
+                style: const TextStyle(
+                    color: Colors.blue, fontWeight: FontWeight.w900),
+              ),
             ),
             const Text('  /  '),
-            Text(
-              widget.word.anlam,
-              style: const TextStyle(color: Colors.green),
+            Expanded(
+              child: Text(
+                widget.word.anlam,
+                style: const TextStyle(color: Colors.green),
+              ),
             ),
           ],
         ),

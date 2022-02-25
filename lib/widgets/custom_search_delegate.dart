@@ -54,6 +54,7 @@ class CustomSearchDelegate extends SearchDelegate {
             itemBuilder: (context, index) {
               var _oAnkiListeElemani = filteredList[index];
               return Dismissible(
+                direction: DismissDirection.startToEnd,
                 background: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
