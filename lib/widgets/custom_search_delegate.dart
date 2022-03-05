@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:ingilizce_kelime/data/local_storage.dart';
-import 'package:ingilizce_kelime/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ingilizce_kelime/data/providers.dart';
 
 import '../models/word_model.dart';
 import 'word_list_item.dart';
 
 class CustomSearchDelegate extends SearchDelegate {
-  final List<Word> allWord;
+  
 
-  CustomSearchDelegate({required this.allWord});
+  
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
@@ -41,15 +41,18 @@ class CustomSearchDelegate extends SearchDelegate {
     return _metod(context);
   }
 
-  Widget _metod(BuildContext context) {
-    List<Word> filteredList = allWord
+  Widget _metod (BuildContext context)  {
+
+    return Consumer(builder: (context, ref, child) {
+      List<Word> allWord = ref.watch(wordProvider);
+      List<Word> filteredList = allWord
         .where(
           (element) =>
               element.kelime.toLowerCase().contains(query.toLowerCase()),
         )
         .toList();
 
-    return filteredList.isNotEmpty
+        return filteredList.isNotEmpty
         ? ListView.builder(
             itemBuilder: (context, index) {
               var _oAnkiListeElemani = filteredList[index];
@@ -65,7 +68,7 @@ class CustomSearchDelegate extends SearchDelegate {
                 key: Key(_oAnkiListeElemani.id),
                 onDismissed: (direction) async {
                   filteredList.removeAt(index);
-                  await locator<LocalStorage>()
+                  await ref.read(wordProvider.notifier)
                       .deleteWord(word: _oAnkiListeElemani);
                 },
                 child: WordItem(
@@ -78,5 +81,14 @@ class CustomSearchDelegate extends SearchDelegate {
         : const Center(
             child: Text('Aranan Kelime Yok...'),
           );
+
+
+    },);
+
+
+
+    
+
+    
   }
 }

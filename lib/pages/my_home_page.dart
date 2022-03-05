@@ -1,36 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:ingilizce_kelime/data/local_storage.dart';
-import 'package:ingilizce_kelime/main.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ingilizce_kelime/data/providers.dart';
 import 'package:ingilizce_kelime/models/word_model.dart';
-import 'package:ingilizce_kelime/pages/random_card.dart';
+import 'package:ingilizce_kelime/pages/random_word_page.dart';
 import 'package:ingilizce_kelime/widgets/custom_search_delegate.dart';
 import 'package:ingilizce_kelime/widgets/word_list_item.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePage extends ConsumerWidget {
+  MyHomePage({Key? key}) : super(key: key);
   final TextEditingController _kelimeController = TextEditingController();
   final TextEditingController _anlamController = TextEditingController();
   final TextEditingController _cumleController = TextEditingController();
 
-  late List<Word> _allWords;
-  late LocalStorage _localStorage;
-
   @override
-  void initState() {
-    super.initState();
-    _localStorage = locator<LocalStorage>();
-    _allWords = <Word>[];
-    _getAllWordFromDb();
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Word> _allWords = ref.watch(wordProvider);
     var kelimeSayisi = _allWords.length;
     return Scaffold(
         backgroundColor: Colors.white,
@@ -42,24 +26,24 @@ class _MyHomePageState extends State<MyHomePage> {
           actions: [
             IconButton(
                 onPressed: () {
-                  _showSearchPage();
+                  _showSearchPage(context);
                 },
                 icon: const Icon(Icons.search)),
             IconButton(
                 onPressed: () {
-                  _showAddWordBottomSheet();
+                  _showAddWordBottomSheet(context, ref);
                 },
                 icon: const Icon(Icons.add)),
             IconButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const RandomWordCard(),
+                    builder: (context) => const RandomWordPage(),
                   ));
                 },
                 icon: const Icon(Icons.workspaces_outlined))
           ],
         ),
-        body: _allWords.isNotEmpty
+        body: ref.watch(wordProvider).isNotEmpty
             ? ListView.builder(
                 itemBuilder: (context, index) {
                   var _oAnkiListeElemani = _allWords[index];
@@ -74,9 +58,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     key: Key(_oAnkiListeElemani.id),
                     onDismissed: (direction) {
-                      _allWords.removeAt(index);
-                      _localStorage.deleteWord(word: _oAnkiListeElemani);
-                      setState(() {});
+                      ref
+                          .read(wordProvider.notifier)
+                          .deleteWord(word: _oAnkiListeElemani);
                     },
                     child: WordItem(
                       word: _oAnkiListeElemani,
@@ -90,7 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ));
   }
 
-  void _showAddWordBottomSheet() {
+  void _showAddWordBottomSheet(BuildContext context, WidgetRef ref) {
+    //List<Word> _allWords = ref.watch(wordProvider);
     showModalBottomSheet(
         isScrollControlled: true,
         context: context,
@@ -149,9 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
                               kelime: _kelimeController.text,
                               anlam: _anlamController.text,
                               cumle: _cumleController.text);
-                          _allWords.insert(0, yeniKelime);
-                          await _localStorage.addWord(word: yeniKelime);
-                          setState(() {});
+                          //_allWords.insert(0, yeniKelime);
+                          await ref
+                              .read(wordProvider.notifier)
+                              .addWord(word: yeniKelime);
+
                           Navigator.pop(context);
                           _kelimeController.clear();
                           _anlamController.clear();
@@ -166,14 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  void _getAllWordFromDb() async {
-    _allWords = await _localStorage.getAllWord();
-    setState(() {});
-  }
-
-  void _showSearchPage() async {
-    await showSearch(
-        context: context, delegate: CustomSearchDelegate(allWord: _allWords));
-    _getAllWordFromDb();
+  void _showSearchPage(BuildContext context) async {
+    await showSearch(context: context, delegate: CustomSearchDelegate());
   }
 }
