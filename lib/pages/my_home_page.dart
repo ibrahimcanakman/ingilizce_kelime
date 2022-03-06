@@ -37,7 +37,7 @@ class MyHomePage extends ConsumerWidget {
             IconButton(
                 onPressed: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => const RandomWordPage(),
+                    builder: (context) => RandomWordPage(),
                   ));
                 },
                 icon: const Icon(Icons.workspaces_outlined))
